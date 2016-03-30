@@ -1,0 +1,83 @@
+<div class="search-box">
+  <%= form_tag users_path, :class => "form-search", :id=>"aws_form_search", :method => :get do %>
+      <article>
+        <%= text_field_tag :keywords, '', { :value => params[:keywords], :class => "form-control", :id => "projects-lists", :placeholder => 'Search Locality / Builders / Apartments in Bangalore' } %>
+      </article>
+      <button class="btn btn-success ripple" type="submit" style="background-image:none;border:0px;" id="submitButton"><%=image_tag ("frontend/search-icon.png") %> <em>Search</em></button>
+  <%end%>
+</div>
+
+
+<p id="notice"><%= notice %></p>
+
+<h1>Listing Users</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>First name</th>
+      <th>City</th>
+      <th colspan="3"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @users.each do |user| %>
+      <tr>
+        <td><%= user.name %></td>
+        <td><%= user.first_name %></td>
+        <td><%= user.city %></td>
+        <td><%= link_to 'Show', user %></td>
+        <td><%= link_to 'Edit', edit_user_path(user) %></td>
+        <td><%= link_to 'Destroy', user, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New User', new_user_path %>
+
+<script>
+    $.widget( "custom.catcomplete", $.ui.autocomplete, {
+        _create: function() {
+            this._super();
+            this.widget().menu( "option", "items", "> :not(.ui-autocomplete-category)" );
+        },
+        _renderMenu: function( ul, items ) {
+            var that = this,
+                    currentCategory = "";
+            $.each( items, function( index, item ) {
+                var li;
+                if ( item.category != currentCategory &&  item.category != undefined ) {
+
+                    ul.append( "<li class='ui-autocomplete-category'>" + item.category + "</li>" );
+                    currentCategory = item.category;
+                }
+                li = that._renderItemData( ul, item );
+                if ( item.category ) {
+                    li.attr( "aria-label", item.category + " : " + item.label );
+                }
+            });
+        }
+    });
+
+    $("#projects-lists").catcomplete({
+        source: "/project_data",
+        select: function(event, ui) {
+            $(event.target).val(ui.item.value);
+            if(ui.item.value!='No Result Found')
+            {
+                $('#aws_form_search').submit();
+                return false;
+            }
+            else {
+                $(event.target).val('')
+                return false;
+            }
+        }
+
+    });
+</script>

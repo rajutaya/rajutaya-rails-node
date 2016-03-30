@@ -1,0 +1,6 @@
+development:
+    host: "localhost:5000"
+test:
+    host: "localhost:5000"
+production:
+    host: "localhost:5000"
